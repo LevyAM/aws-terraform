@@ -20,3 +20,32 @@ resource "aws_subnet" "subnets" {
         "name" = "${var.prefix}-subnet-${count.index}"
     }
 }
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = "${aws_vpc.new-vpc.id}"
+  tags = {
+    "Name" = "${var.prefix}-igw"
+  }
+}
+
+resource "aws_route_table" "route-table" {
+  vpc_id = "${aws_vpc.new-vpc.id}"
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.igw.id}"
+    }
+  tags = {
+    "Name" = "${var.prefix}-rtb"
+  }
+}
+
+resource "aws_route_table_association" "rtb-association" {
+    count = 2
+    route_table_id = "${aws_route_table.route-table.id}"
+    subnet_id = "${aws_subnet.subnets.*.id[count.index]}"
+}
+  
+
+  
+
+  
