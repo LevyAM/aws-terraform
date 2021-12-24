@@ -8,6 +8,9 @@ resource "aws_security_group" "sg" {
         cidr_blocks = ["0.0.0.0/0"]
         prefix_list_ids = []
     }
+      lifecycle {
+    create_before_destroy = true
+    }
 
     tags = {
       "Name" = "${var.prefix}-sg"
